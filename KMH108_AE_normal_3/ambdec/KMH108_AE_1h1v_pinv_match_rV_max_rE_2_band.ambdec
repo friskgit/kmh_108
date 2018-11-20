@@ -1,0 +1,60 @@
+# AmbDec configuration
+# Written by Ambisonic Decoder Toolbox, version 8.0
+# run by henrik_frisk on  (x86_64-apple-darwin17.6.0) at 25-Sep-2018 17:27:19
+
+# input channel order: WYZX
+
+/description     KMH108_AE_1h1v_pinv_match_rV_max_rE_2_band
+
+/version         	3
+
+/dec/chan_mask   	f
+/dec/freq_bands  	2
+/dec/speakers    	8
+/dec/coeff_scale 	fuma
+
+/opt/input_scale  	fuma
+/opt/nfeff_comp   	input
+/opt/delay_comp   	on
+/opt/level_comp   	on
+/opt/xover_freq   	400.000000
+/opt/xover_ratio  	0.000000
+
+/speakers/{
+#            id      dist     azim     elev     conn
+#-----------------------------------------------------------------------
+add_spkr 	L	 2.500000	 27.167560	 0.000000
+add_spkr 	R	 2.500000	-27.167560	 0.000000
+add_spkr 	FSR	 2.500000	-63.823243	 0.000000
+add_spkr 	SR	 2.500000	-107.595814	 0.000000
+add_spkr 	RR	 2.500000	-152.448538	 16.045922
+add_spkr 	RL	 2.500000	 152.551462	 16.045922
+add_spkr 	SL	 2.500000	 107.404186	 0.000000
+add_spkr 	FSR	 2.500000	 63.817162	 0.000000
+/}
+
+/lfmatrix/{
+order_gain	1.000000	1.000000	0.000000	0.000000
+add_row 	 0.052253	 0.107444	 1.031503	 0.377712
+add_row 	 0.052148	-0.107898	 1.032149	 0.378028
+add_row 	 0.202763	-0.211699	-0.309800	 0.067928
+add_row 	 0.452483	-0.224594	-2.534554	-0.446294
+add_row 	-0.000185	-0.104644	 1.810429	 0.000429
+add_row 	 0.000185	 0.104644	 1.807415	-0.000429
+add_row 	 0.451630	 0.225202	-2.526358	-0.444747
+add_row 	 0.202937	 0.211545	-0.310785	 0.067373
+/}
+
+/hfmatrix/{
+order_gain	2.000000	1.154701	0.000000	0.000000
+add_row 	 0.052253	 0.107444	 1.031503	 0.377712
+add_row 	 0.052148	-0.107898	 1.032149	 0.378028
+add_row 	 0.202763	-0.211699	-0.309800	 0.067928
+add_row 	 0.452483	-0.224594	-2.534554	-0.446294
+add_row 	-0.000185	-0.104644	 1.810429	 0.000429
+add_row 	 0.000185	 0.104644	 1.807415	-0.000429
+add_row 	 0.451630	 0.225202	-2.526358	-0.444747
+add_row 	 0.202937	 0.211545	-0.310785	 0.067373
+/}
+
+/end

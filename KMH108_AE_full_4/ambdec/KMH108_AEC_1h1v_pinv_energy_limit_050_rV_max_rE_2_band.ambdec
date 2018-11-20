@@ -1,0 +1,63 @@
+# AmbDec configuration
+# Written by Ambisonic Decoder Toolbox, version 8.0
+# run by henrik_frisk on  (x86_64-apple-darwin17.6.0) at 25-Sep-2018 18:05:56
+
+# input channel order: WYZX
+
+/description     KMH108_AEC_1h1v_pinv_energy_limit_050_rV_max_rE_2_band
+
+/version         	3
+
+/dec/chan_mask   	f
+/dec/freq_bands  	2
+/dec/speakers    	9
+/dec/coeff_scale 	fuma
+
+/opt/input_scale  	fuma
+/opt/nfeff_comp   	input
+/opt/delay_comp   	on
+/opt/level_comp   	on
+/opt/xover_freq   	400.000000
+/opt/xover_ratio  	0.000000
+
+/speakers/{
+#            id      dist     azim     elev     conn
+#-----------------------------------------------------------------------
+add_spkr 	L	 2.500000	 27.167560	 0.000000
+add_spkr 	C	 2.500000	 0.000000	 0.000000
+add_spkr 	R	 2.500000	-27.167560	 0.000000
+add_spkr 	FSR	 2.500000	-63.823243	 0.000000
+add_spkr 	SR	 2.500000	-107.595814	 0.000000
+add_spkr 	RR	 2.500000	-152.448538	 16.045922
+add_spkr 	RL	 2.500000	 152.551462	 16.045922
+add_spkr 	SL	 2.500000	 107.404186	 0.000000
+add_spkr 	FSR	 2.500000	 63.817162	 0.000000
+/}
+
+/lfmatrix/{
+order_gain	1.000000	1.000000	0.000000	0.000000
+add_row 	 0.234663	 0.220336	 0.419096	 0.425944
+add_row 	 0.207115	-0.000222	 0.602850	 0.500773
+add_row 	 0.234566	-0.220714	 0.419351	 0.426216
+add_row 	 0.346320	-0.433498	-0.327070	 0.122678
+add_row 	 0.531624	-0.460215	-1.564450	-0.380634
+add_row 	 0.253745	-0.214444	 1.268688	-0.292927
+add_row 	 0.254038	 0.214208	 1.267113	-0.293730
+add_row 	 0.531032	 0.461031	-1.559673	-0.379042
+add_row 	 0.346488	 0.433364	-0.327413	 0.122209
+/}
+
+/hfmatrix/{
+order_gain	2.121320	1.224745	0.000000	0.000000
+add_row 	 0.234663	 0.220336	 0.419096	 0.425944
+add_row 	 0.207115	-0.000222	 0.602850	 0.500773
+add_row 	 0.234566	-0.220714	 0.419351	 0.426216
+add_row 	 0.346320	-0.433498	-0.327070	 0.122678
+add_row 	 0.531624	-0.460215	-1.564450	-0.380634
+add_row 	 0.253745	-0.214444	 1.268688	-0.292927
+add_row 	 0.254038	 0.214208	 1.267113	-0.293730
+add_row 	 0.531032	 0.461031	-1.559673	-0.379042
+add_row 	 0.346488	 0.433364	-0.327413	 0.122209
+/}
+
+/end

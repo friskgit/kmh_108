@@ -1,0 +1,63 @@
+# AmbDec configuration
+# Written by Ambisonic Decoder Toolbox, version 8.0
+# run by henrik_frisk on  (x86_64-apple-darwin17.6.0) at 25-Sep-2018 18:04:44
+
+# input channel order: WYZX
+
+/description     KMH108_AEC_1h1v_pinv_match_rV_max_rE_2_band
+
+/version         	3
+
+/dec/chan_mask   	f
+/dec/freq_bands  	2
+/dec/speakers    	9
+/dec/coeff_scale 	fuma
+
+/opt/input_scale  	fuma
+/opt/nfeff_comp   	input
+/opt/delay_comp   	on
+/opt/level_comp   	on
+/opt/xover_freq   	400.000000
+/opt/xover_ratio  	0.000000
+
+/speakers/{
+#            id      dist     azim     elev     conn
+#-----------------------------------------------------------------------
+add_spkr 	L	 2.500000	 27.167560	 0.000000
+add_spkr 	C	 2.500000	 0.000000	 0.000000
+add_spkr 	R	 2.500000	-27.167560	 0.000000
+add_spkr 	FSR	 2.500000	-63.823243	 0.000000
+add_spkr 	SR	 2.500000	-107.595814	 0.000000
+add_spkr 	RR	 2.500000	-152.448538	 16.045922
+add_spkr 	RL	 2.500000	 152.551462	 16.045922
+add_spkr 	SL	 2.500000	 107.404186	 0.000000
+add_spkr 	FSR	 2.500000	 63.817162	 0.000000
+/}
+
+/lfmatrix/{
+order_gain	1.000000	1.000000	0.000000	0.000000
+add_row 	 0.047967	 0.107519	 0.645973	 0.249148
+add_row 	 0.010336	-0.000181	 0.929750	 0.310045
+add_row 	 0.047860	-0.107823	 0.646394	 0.249389
+add_row 	 0.200578	-0.211661	-0.506259	 0.002415
+add_row 	 0.453789	-0.224617	-2.417089	-0.407123
+add_row 	-0.000188	-0.104644	 1.810151	 0.000337
+add_row 	 0.000188	 0.104644	 1.807693	-0.000337
+add_row 	 0.452927	 0.225179	-2.409770	-0.405869
+add_row 	 0.200757	 0.211583	-0.506842	 0.001994
+/}
+
+/hfmatrix/{
+order_gain	2.121320	1.224745	0.000000	0.000000
+add_row 	 0.047967	 0.107519	 0.645973	 0.249148
+add_row 	 0.010336	-0.000181	 0.929750	 0.310045
+add_row 	 0.047860	-0.107823	 0.646394	 0.249389
+add_row 	 0.200578	-0.211661	-0.506259	 0.002415
+add_row 	 0.453789	-0.224617	-2.417089	-0.407123
+add_row 	-0.000188	-0.104644	 1.810151	 0.000337
+add_row 	 0.000188	 0.104644	 1.807693	-0.000337
+add_row 	 0.452927	 0.225179	-2.409770	-0.405869
+add_row 	 0.200757	 0.211583	-0.506842	 0.001994
+/}
+
+/end

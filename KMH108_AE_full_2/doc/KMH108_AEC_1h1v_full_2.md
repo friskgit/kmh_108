@@ -1,0 +1,16 @@
+
+### decoder information 
+decoder file = ../decoders/KMH108_AEC_1h1v_pinv_even_energy_rV_max_rE_2_band.dsp
+description = KMH108_AEC_1h1v_pinv_even_energy_rV_max_rE_2_band
+speaker array name = KMH108_AEC
+horizontal order   = 1
+vertical order     = 1
+coefficient order  = fuma
+coefficient scale  = fuma
+input scale        = fuma
+mixed-order scheme = HV
+input channel order: WXYZ
+output speaker order: L C R FSR SR RR RL SL FSR 
+
+---
+
