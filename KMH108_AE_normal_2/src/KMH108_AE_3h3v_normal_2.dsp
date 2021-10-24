@@ -466,9 +466,9 @@ gate_bus(order,o)       =  gate(order==o);
 
 
 // route (not used)
-route(n_inputs,n_outputs,outs) = m.bus(n_inputs)
-                               <: par(i,n_outputs,(0,gate_bus(i,outs)):>_)
-                               : m.bus(n_outputs);
+//route(n_inputs,n_outputs,outs) = m.bus(n_inputs)
+//                               <: par(i,n_outputs,(0,gate_bus(i,outs)):>_)
+
 
 //process = route(4,4,(3,1,1,2)); // test
 

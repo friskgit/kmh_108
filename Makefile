@@ -12,17 +12,37 @@
 # default but the build command may change this by running:
 #
 # make -K target=sc all
-#
+
+#------------------------------------#
+
 # This builds the 'all' target in this Makefile and
 # the sc target in the sub-Makefiles.
 #
+# To clean out all SVG files that may take up space:
+#
+# make clean_svg
+# 
+#
 # # 23 September 2018	Henrik Frisk	mail@henrikfrisk.com
+
+# sed script to remove faulty lines:
+# sed -i -E 's/(.+n_inputs,n_outputs,outs.+)/\/\/\1/; s/(.+par.i,n_outputs,.0,gate_bus.i,outs.+)/\/\/\1/; s/.+m.bus.n_outputs.+//'
 
 subdirs := $(wildcard ./KMH*)
 target_makefile	:=  ~/Music/faust/faust_stuff.git/Makefile.adt
 target 	:= all
+sources := $(wildcard */src/*.dsp)
+
+test: 
+	@echo $(UNAME)
+
+print_subdirs :
+	@echo $(subdirs)
 
 .PHONY : all $(subdirs) update_makefile
+
+clean_svg :
+	$(foreach var, $(subdirs), $(shell rm "$(var)"/doc/*-svg/*.svg))
 
 all : $(subdirs)
 
@@ -32,3 +52,9 @@ $(subdirs) :
 
 update_makefile : $(target_makefile)
 	$(foreach var, $(subdirs), $(shell cp "$<" "$(var)/Makefile")) 
+
+list_sources :
+	@echo $(sources)
+
+edit_sources :
+	$(foreach var, $(sources), $(shell sed -i -E 's/(.+n_inputs,n_outputs,outs.+)/\/\/\1/; s/(.+par.i,n_outputs,.0,gate_bus.i,outs.+)/\/\/\1/; s/.+m.bus.n_outputs.+//' $(var)))

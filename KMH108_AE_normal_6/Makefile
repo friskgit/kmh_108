@@ -31,6 +31,21 @@
 #
 # 30 Juni 2018	Henrik Frisk	mail@henrikfrisk.com
 
+## Platform specific
+
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Linux)
+	SYSTEM =+ Linux
+	SUPERNOVA_EXT = .so
+	SC_INSTALL = ~/.local/share/SuperCollider/Extensions/MyExtensions
+endif
+ifeq ($(UNAME), Darwin)
+	SYSTEM =+ OSX
+	SUPERNOVA_EXT = .scx
+	SC_INSTALL := ~/Library/Application\ Support/SuperCollider/Extensions/ADT
+endif
+
 ## Specify the sources to build here
 srcdir	:= src
 src	:= $(wildcard $(addsuffix /*.dsp, $(srcdir)))
@@ -57,8 +72,8 @@ app	:= $(addprefix $(bindir)/, $(notdir $(src:.dsp=.app)))
 vst	:= $(addprefix $(vstdir)/, $(notdir $(src:.dsp=.vst)))
 mxo	:= $(addprefix $(maxdir)/, $(notdir $(src:.dsp=~.mxo)))
 sc	:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=.sc)))
-scx	:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=.scx)))
-superscx:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=_supernova.scx)))
+scx	:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=$(SUPERNOVA_EXT))))
+superscx:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=_supernova$(SUPERNOVA_EXT))))
 ambix	:= $(addprefix $(ambixdir)/, $(notdir $(src:.dsp=.config)))
 pd	:= $(addprefix $(pddir)/, $(notdir $(src:.dsp=~.pd_darwin)))
 html	:= $(addprefix $(docdir)/, $(notdir $(src:.dsp=.html)))
@@ -95,14 +110,15 @@ FAUST2MDOC	:= f2mdoc
 REQUIRED_DIRS	= $(bindir) $(docdir) $(cppdir) $(scdir) $(maxdir) $(vstdir) $(pddir) $(pdinstdir) $(vstinstdir) $(ambixinstdir)/$(amb108) $(ambixinstdir)/$(amb114) $(ambixinstdir)/$(ambls)
 MKDIR	       	:= $(shell for d in $(REQUIRED_DIRS); \
 			do				\
-			[[ -d $$d ]] || mkdir -p $$d; 	\
+			[ -d $$d ] || mkdir -p $$d; 	\
 			done)
 
 LOC108		:= KMH108
 LOC114		:= KMH114
 LOCLS		:= KMHLS
 
-SC_INSTALL	:= ~/Library/Application\ Support/SuperCollider/Extensions/ADT
+# SC_INSTALL	:= ~/Library/Application\ Support/SuperCollider/Extensions/ADT
+# LINUX_SC_INSTALL := ~/.local/share/SuperCollider/Extensions/MyExtensions
 VST_INSTALL	:= $(vstinstdir)
 ##MAX_INSTALL	:= ~/Documents/Max\ 7/Packages
 MAX_INSTALL	:= $(maxdir)
@@ -117,8 +133,8 @@ MAX_PACKAGE_DIRS:= $(MAX_EXTERNALS) $(MAX_JSUI) $(MAX_MISC)
 VST		:= $(addprefix $(VST_INSTALL)/, $(notdir $(src:.dsp=.vst)))
 PD		:= $(addprefix $(PD_INSTALL)/, $(notdir $(src:.dsp=~.pd_darwin)))
 SC		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=.sc)))
-SCX		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=.scx)))
-SSCX		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=_supernova.scx)))
+SCX		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=$(SUPERNOVA_EXT))))
+SSCX		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=_supernova$(SUPERNOVA_EXT))))
 
 .DEFAULT_GOAL	:= all
 
@@ -198,11 +214,13 @@ $(docdir)/%-svg : $(srcdir)/%.dsp
 	@rm -rf $(<:.dsp=-svg)
 
 $(scdir)/%.sc : $(srcdir)/%.dsp
-	export SUPERCOLLIDER_HEADERS=~/bin/supercollider/include/; \
+ifeq ($(SYSTEM), OSX)
+	export SUPERCOLLIDER_HEADERS=~/bin/supercollider/include/;
+endif
 	$(FAUST2SC) $<
 	@mv $(basename $<).sc $@
-	@mv $(basename $<).scx $(scdir)
-	@mv $(basename $<)_supernova.scx $(scdir)
+	@mv $(basename $<)$(SUPERNOVA_EXT) $(scdir)
+	@mv $(basename $<)_supernova$(SUPERNOVA_EXT) $(scdir)
 	@mv $(basename $<).cpp $(cppdir)
 
 .PHONY : maxinstall maxdirs tester maxbin maxjsui maxreadme maxhelp
