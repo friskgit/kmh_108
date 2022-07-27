@@ -18,7 +18,7 @@
 # * jack
 # * app
 # * runapp (will run the application)
-# * max
+# * max  (made a test with faust2msp for max 8 compatibility 30/10 2019)
 # * sc (supercollider)
 # * pd
 # * mdoc
@@ -29,6 +29,9 @@
 # * clean_all (will clean all required dirs)
 # * clean (will only clean the bin directory)
 #
+# maxinstall, scinstall, vstinstall etc attempts to install in default positions, the exact
+# location can be specified below under respective argument (see Install directories)
+# 
 # 30 Juni 2018	Henrik Frisk	mail@henrikfrisk.com
 
 ## Platform specific
@@ -37,12 +40,12 @@ UNAME := $(shell uname)
 
 ifeq ($(UNAME), Linux)
 	SYSTEM =+ Linux
-	SUPERNOVA_EXT = .so
-	SC_INSTALL = ~/.local/share/SuperCollider/Extensions/MyExtensions
+	SUPERNOVA_EXT = so
+	SC_INSTALL := ~/.local/share/SuperCollider/Extensions/MyExtensions
 endif
 ifeq ($(UNAME), Darwin)
 	SYSTEM =+ OSX
-	SUPERNOVA_EXT = .scx
+	SUPERNOVA_EXT = scx
 	SC_INSTALL := ~/Library/Application\ Support/SuperCollider/Extensions/ADT
 endif
 
@@ -59,9 +62,15 @@ maxdir	:= $(bindir)/max
 vstdir	:= $(bindir)/vst
 pddir	:= $(bindir)/pd
 ambixdir:= ambix
+
+## Install directories
 pdinstdir	:= ~/Documents/Pd/externals/ADT
 vstinstdir	:= ~/Library/Audio/Plug-Ins/VST/ADT
 ambixinstdir	:= ~/Library/ambix/binaural_presets
+maxinstall	:= ~/Documents/Max\ 7/Packages
+maxpackage	:= $(maxdir)
+
+## Variables
 amb108		:= kmh_108
 amb114		:= kmh_114
 ambls		:= kmh_ls
@@ -71,9 +80,9 @@ jack	:= $(addprefix $(bindir)/, $(notdir $(basename $(src))))
 app	:= $(addprefix $(bindir)/, $(notdir $(src:.dsp=.app)))
 vst	:= $(addprefix $(vstdir)/, $(notdir $(src:.dsp=.vst)))
 mxo	:= $(addprefix $(maxdir)/, $(notdir $(src:.dsp=~.mxo)))
+scx	:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=.$(SUPERNOVA_EXT))))
+superscx:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=_supernova.$(SUPERNOVA_EXT))))
 sc	:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=.sc)))
-scx	:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=$(SUPERNOVA_EXT))))
-superscx:= $(addprefix $(scdir)/, $(notdir $(src:.dsp=_supernova$(SUPERNOVA_EXT))))
 ambix	:= $(addprefix $(ambixdir)/, $(notdir $(src:.dsp=.config)))
 pd	:= $(addprefix $(pddir)/, $(notdir $(src:.dsp=~.pd_darwin)))
 html	:= $(addprefix $(docdir)/, $(notdir $(src:.dsp=.html)))
@@ -117,11 +126,10 @@ LOC108		:= KMH108
 LOC114		:= KMH114
 LOCLS		:= KMHLS
 
-# SC_INSTALL	:= ~/Library/Application\ Support/SuperCollider/Extensions/ADT
-# LINUX_SC_INSTALL := ~/.local/share/SuperCollider/Extensions/MyExtensions
+# SC_INSTALL see above
 VST_INSTALL	:= $(vstinstdir)
-##MAX_INSTALL	:= ~/Documents/Max\ 7/Packages
-MAX_INSTALL	:= $(maxdir)
+MAX_OBJECTS	:= $(maxpackage)
+MAX_INSTALL	:= $(maxinstall)
 PD_INSTALL	:= $(pdinstdir)
 AMBIX_INSTALL	:= $(ambixinstdir)
 MAX_HELP	:= help
@@ -133,8 +141,8 @@ MAX_PACKAGE_DIRS:= $(MAX_EXTERNALS) $(MAX_JSUI) $(MAX_MISC)
 VST		:= $(addprefix $(VST_INSTALL)/, $(notdir $(src:.dsp=.vst)))
 PD		:= $(addprefix $(PD_INSTALL)/, $(notdir $(src:.dsp=~.pd_darwin)))
 SC		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=.sc)))
-SCX		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=$(SUPERNOVA_EXT))))
-SSCX		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=_supernova$(SUPERNOVA_EXT))))
+SCX		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=.scx)))
+SSCX		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=_supernova.scx)))
 
 .DEFAULT_GOAL	:= all
 
@@ -142,7 +150,7 @@ SSCX		:= $(addprefix $(SC_INSTALL)/, $(notdir $(src:.dsp=_supernova$(SUPERNOVA_E
 
 all : $(app) $(jack) $(vst) $(html) $(mxo) $(sc) $(svg) $(pd)
 
-install : scinstall maxinstall pdinstall vstinstall ambixinstall
+install : scinstall maxpackage pdinstall vstinstall ambixinstall
 
 doc : $(html)
 
@@ -219,49 +227,60 @@ ifeq ($(SYSTEM), OSX)
 endif
 	$(FAUST2SC) $<
 	@mv $(basename $<).sc $@
-	@mv $(basename $<)$(SUPERNOVA_EXT) $(scdir)
-	@mv $(basename $<)_supernova$(SUPERNOVA_EXT) $(scdir)
+	@mv $(basename $<).$(SUPERNOVA_EXT) $(scdir)
+	@mv $(basename $<)_supernova.$(SUPERNOVA_EXT) $(scdir)
 	@mv $(basename $<).cpp $(cppdir)
 
-.PHONY : maxinstall maxdirs tester maxbin maxjsui maxreadme maxhelp
+.PHONY : maxpackage maxdirs tester maxbin maxjsui maxreadme maxhelp maxzip
 
-maxinstall : max maxbin maxjsui maxreadme maxhelp
+maxzip : 
+	@echo $(maxdir)
+	$(eval maxobj=$(wildcard $(maxdir)/*))	
+	$(foreach var, $(maxobj), @zip -r $(var).zip $(var))
+
+maxpackage : max maxbin maxjsui maxreadme maxhelp
 	rm $(maxdir)/*.maxpat && rm -rf $(maxdir)/*.mxo && rm $(maxdir)/*.js
-	@echo "Max package installed in $(MAX_INSTALL)"
+	@echo "Max package installed in $(MAX_OBJECTS)"
 	@echo ""
+
+maxinstall : #maxpackage
+	@echo "Installing Max objects in $(MAX_INSTALL)"
+	@echo ""
+	$(eval maxobj=$(wildcard $(maxdir)/*))	
+	$(foreach var, $(maxobj), $(shell cp -R $(var) $(MAX_INSTALL)))
 
 maxreadme : doc
-	@echo "Installing max/msp doc files in $(MAX_INSTALL)"
+	@echo "Installing max/msp doc files in $(MAX_OBJECTS)"
 	@echo ""
 	$(eval maxdoc=$(wildcard $(docdir)/*.md))
-	$(foreach var, $(maxdoc), $(shell cp $(var) $(MAX_INSTALL)/$(notdir $(var:.md=))/$(notdir $(var))))
+	$(foreach var, $(maxdoc), $(shell cp $(var) $(MAX_OBJECTS)/$(notdir $(var:.md=))/$(notdir $(var))))
 
 maxhelp : maxhelpdir
-	@echo "Installing max/msp help files in $(MAX_INSTALL)/help"
+	@echo "Installing max/msp help files in $(MAX_OBJECTS)/help"
 	@echo ""
 	$(eval maxpat=$(wildcard $(maxdir)/*.maxpat)) \
-	$(foreach var, $(maxpat), $(shell cp $(var) $(MAX_INSTALL)/$(notdir $(var:.maxpat=))/$(MAX_HELP)/$(notdir $(var:.maxpat=~.maxhelp))))
+	$(foreach var, $(maxpat), $(shell cp $(var) $(MAX_OBJECTS)/$(notdir $(var:.maxpat=))/$(MAX_HELP)/$(notdir $(var:.maxpat=~.maxhelp))))
 
 maxhelpdir :
 	$(eval maxpat=$(wildcard $(maxdir)/*.maxpat)) \
-	$(foreach var, $(mxo), $(shell mkdir -p $(MAX_INSTALL)/$(notdir $(var:~.mxo=))/$(MAX_HELP)))
+	$(foreach var, $(mxo), $(shell mkdir -p $(MAX_OBJECTS)/$(notdir $(var:~.mxo=))/$(MAX_HELP)))
 
 maxjsui : maxbin
-	@echo "Installing max/msp javascript ui files in $(MAX_INSTALL)/jsui"
+	@echo "Installing max/msp javascript ui files in $(MAX_OBJECTS)/jsui"
 	@echo ""
-	$(foreach var, $(mxo), $(shell mkdir -p $(MAX_INSTALL)/$(notdir $(var:~.mxo=))/$(MAX_JSUI)))
-	$(foreach var, $(mxo), $(shell cp $(maxdir)/ui.js $(MAX_INSTALL)/$(notdir $(var:~.mxo=))/$(MAX_JSUI)))
+	$(foreach var, $(mxo), $(shell mkdir -p $(MAX_OBJECTS)/$(notdir $(var:~.mxo=))/$(MAX_JSUI)))
+	$(foreach var, $(mxo), $(shell cp $(maxdir)/ui.js $(MAX_OBJECTS)/$(notdir $(var:~.mxo=))/$(MAX_JSUI)))
 
 maxbin : maxbindir
-	@echo "Installing max/msp binaries in $(MAX_INSTALL)/externals"
+	@echo "Installing max/msp binaries in $(MAX_OBJECTS)/externals"
 	@echo ""
-	$(foreach var, $(mxo), $(shell cp -r $(var) $(MAX_INSTALL)/$(notdir $(var:~.mxo=))/$(MAX_EXTERNALS)))
+	$(foreach var, $(mxo), $(shell cp -r $(var) $(MAX_OBJECTS)/$(notdir $(var:~.mxo=))/$(MAX_EXTERNALS)))
 
 maxbindir :
-	$(foreach var, $(mxo), $(shell mkdir -p $(MAX_INSTALL)/$(notdir $(var:~.mxo=))/$(MAX_EXTERNALS)))
+	$(foreach var, $(mxo), $(shell mkdir -p $(MAX_OBJECTS)/$(notdir $(var:~.mxo=))/$(MAX_EXTERNALS)))
 
-maxdirs : # maxinstall
-	 $(foreach var, $(mxo), $(if [[ ! -d $(MAX_INSTALL)/$(notdir $(var:~.mxo=))/$(mvar)]], $(foreach mvar, $(MAX_PACKAGE_DIRS), @mkdir $(MAX_INSTALL)/$(notdir $(var:~.mxo=))/$(mvar)), "Directory exists"));
+maxdirs : # maxpackage
+	 $(foreach var, $(mxo), $(if [[ ! -d $(MAX_OBJECTS)/$(notdir $(var:~.mxo=))/$(mvar)]], $(foreach mvar, $(MAX_PACKAGE_DIRS), @mkdir $(MAX_OBJECTS)/$(notdir $(var:~.mxo=))/$(mvar)), "Directory exists"));
 
 scinstall : ##$(SC) $(SCX) $(SSCX)
 	@echo "Installing SuperCollider extensions  in $(SC_INSTALL)"
@@ -289,6 +308,12 @@ ambixinstall :
 	$(if $(ambix), $(if $(wildcard $(srcdir)/$(LOC108)*.dsp), install $(wildcard $(ambixdir)/*.config) $(AMBIX_INSTALL)/$(amb108))) \
 	$(if $(ambix), $(if $(wildcard $(srcdir)/$(LOC114)*.dsp), install $(wildcard $(ambixdir)/*.config) $(AMBIX_INSTALL)/$(amb114))) \
 	$(if $(ambix), $(if $(wildcard $(srcdir)/$(LOCLS)*.dsp), install $(wildcard $(ambixdir)/*.config) $(AMBIX_INSTALL)/$(ambls)))
+
+update_author :
+	$(foreach var, $(src), $(shell sed -i.bu 's/AmbisonicDecoderToolkit"/AmbisonicDecoderToolkit, Henrik Frisk"/' $(var)))
+
+clean_max :
+	  @rm -rf $(maxdir)/*
 
 clean_all :
 	@rm  -rf $(REQUIRED_DIRS)
